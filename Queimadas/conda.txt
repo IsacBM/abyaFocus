@@ -1,0 +1,5 @@
+conda activate meuambiente
+
+cd desktop/Queimadas-server
+
+python queimadas-br.py
