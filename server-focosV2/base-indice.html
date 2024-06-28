@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Abya Focos - Mapa de Focos de Incêndio</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="base-reset.css">
+    <link rel="stylesheet" href="base-indice.css">
+    <link rel="stylesheet" href="hover.css">
+    <link rel="shortcut icon" href="/img/_802a7af7-d5b3-4a4d-92e7-5779f2f5aedd-removebg-preview.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Adicionar CSS do plugin leaflet-control-scale -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-scale/dist/leaflet.control.scale.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <!-- Adicionar CSS do leaflet-locatecontrol -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.72.0/L.Control.Locate.min.css" />
+    <link rel="stylesheet" href="base-var.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/solid.css"
+        integrity="sha384-Tv5i09RULyHKMwX0E8wJUqSOaXlyu3SQxORObAI08iUwIalMmN5L6AvlPX2LMoSE" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/fontawesome.css"
+        integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+    <!-- Adicionar JS do leaflet-locatecontrol -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.72.0/L.Control.Locate.min.js"></script>
+    <style>
+        #map { height: 100vh;}
+        .legend {
+            background: white;
+            line-height: 1.5;
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            border: 2px solid black;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Adicionar script do plugin leaflet-control-scale -->
+    <script src="https://unpkg.com/leaflet-control-scale/dist/leaflet.control.scale.min.js"></script>
+
+    <div class="escopo">
+
+        <div class="sidebar">
+            <nav class="sidebar_navigation">
+
+                <div class="painel-abya">
+                    <a href="#">
+                        <span class="painel-nome">Painel ABYA</span>
+                    </a>
+                </div>
+
+                <div class="logo-user">
+                    <a href="#">
+                        <img src="/img/user-logo.png" alt="">
+                    </a>
+                    <div class="user-info">
+                        <span class="nome">Zack B.M</span>
+                        <span class="bio">@isacbm_</span>
+                    </div>
+                </div>
+                <div class="barra">
+                        <ul>
+                            <li class="ativado">
+                                <a href="">
+                                    <span><i class="ph ph-fill ph-house"></i></span>
+                                    <span>Mapa Geral</span>
+                                </a>
+                            </li>
+                            <li class="opcaoii">
+                                <a href="">
+                                    <span><i class="ph ph-bold ph-magnifying-glass"></i></span>
+                                    <span>Mapa de Calor</span>
+                                </a>
+                            </li>
+                            <li class="opcaoi">
+                                <a href="">
+                                    <span><i class="ph ph-bold ph-magnifying-glass"></i></span>
+                                    <span>Gráficos</span>
+                                </a>
+                            </li>
+                            <li class="opcaoii">
+                                <a href="">
+                                    <span><i class="ph ph-bold ph-magnifying-glass"></i></span>
+                                    <span>Opções</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+            </nav>
+            <div class="library">
+                <div class="library__content">
+                  <button class="library__button">
+                    <span class="fa fas fa-bell"><span class="biblio"> Alertas</span></span>
+                  </button>
+                  <button class="library__button-plus">
+                      <span class="fa fa-plus"></span>
+                  </button>
+                </div>
+                <section class="section-playlist">
+                    <div class="section-playlist__content">
+                        <span class="text title">Nenhuma situação de alerta encontrado.</span>
+                        <span class="text subtitle">Qualquer situação encontrada você será notificado(a)!</span>
+                        <button class="section-playlist__button">
+                            <span>Criar situação para Alerta</span>
+                        </button>
+                    </div>
+                    
+                </section>
+                <div class="languages">
+                    <button class="languages__button">
+                        <span class="bi bi-box-arrow-right"></span>
+                        <span>Sair</span>
+                    </button>
+                </div>
+            </div>
+        </div>   
+        <div class="mapa-base">
+            <div id="map"></div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+
+        var map = L.map('map').setView([-15.7801, -47.9292], 4);
+
+        var temaClaro = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)',
+            maxZoom: 17
+        });
+
+        var temaEscuro = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">Isac B.M</a> (CC-BY-SA)',
+            maxZoom: 17
+        });
+
+        var compassControl = L.control({ position: 'topright' });
+
+        compassControl.onAdd = function(map) {
+            var div = L.DomUtil.create('div', 'compass-control');
+            div.innerHTML = '<img src="img/rosa-branca.png" width="97" height="97">';
+            return div;
+        };
+
+        var esriWorldImagery = L.tileLayer('https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?token=<ACCESS_TOKEN>', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ',
+            maxZoom: 17
+        });
+
+
+       var vegetationOverlay = L.tileLayer('https://services.sentinel-hub.com/ogc/wms/YOUR_INSTANCE_ID', {
+            layers: 'WORLD_COVER',
+            format: 'image/png',
+            transparent: true,
+            attribution: 'WorldCover 2020 by Copernicus',
+            styles: 'natural'
+        });
+
+
+        temaClaro.addTo(map);
+
+        L.control.scale({
+            position: 'bottomright',
+            maxWidth: 200, 
+            metric: true, 
+            imperial: false, 
+            updateWhenIdle: true, 
+            textColor: '#ffffff', 
+            backgroundColor: '#000000', 
+            border: '2px solid #ffffff', 
+            fontSize: 12, 
+            fontWeight: 'bold' 
+        }).addTo(map);
+
+        compassControl.addTo(map);
+
+        var baseMaps = {
+            "Tema Padrão": temaClaro,
+            "Tema Escuro": temaEscuro,
+            "Img. de Satelite": esriWorldImagery
+        };
+
+        L.control.layers(baseMaps).addTo(map);
+
+        var markersLayer = L.layerGroup().addTo(map);
+
+        function addMarkers(focos) {
+            markersLayer.clearLayers(); 
+            focos.forEach(function(foco) {
+                L.marker([foco.lat, foco.lon], {icon: L.icon({
+                    iconUrl: 'img/fogo-icon.svg',
+                    iconSize: [32, 32]
+                })}).addTo(markersLayer);
+            });
+        }
+
+        function loadFocosData() {
+            Papa.parse('base-focos-20231010.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    var data = results.data;
+                    data.forEach(function(row) {
+                        L.marker([row.lat, row.lon], {icon: L.icon({
+                            iconUrl: 'img/fogo-icon.svg',
+                            iconSize: [26, 26]
+                        })}).addTo(map)
+                    });
+                },
+                error: function(error) {
+                    console.error('Erro ao carregar dados do CSV:', error);
+                }
+            });
+        }
+
+        loadFocosData();
+
+        setInterval(loadFocosData, 600000);
+
+
+        function loadParquesData() {
+            fetch('protecao-integral/parques-nordeste.geojson')
+                .then(response => response.json())
+                .then(data => {
+                    L.geoJSON(data, {
+                        style: function (feature) {
+                            return {
+                                color: 'green', 
+                                weight: 2, 
+                                opacity: 1, 
+                                fillColor: 'lightgreen', 
+                                fillOpacity: 0.5 
+                        }
+                    }}).addTo(map);
+                })
+                .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
+        }
+
+        function loadDelimitacaoPiaui() {
+            fetch('limite-piaui/base-001.geojson')
+                .then(response => response.json())
+                .then(data => {
+                    L.geoJSON(data, {
+                        style: function (feature) {
+                            return {
+                                color: 'blue', 
+                                weight: 2, 
+                                opacity: 1, 
+                                fillOpacity: 0 
+                        }
+                    }}).addTo(map);
+                })
+                .catch(error => console.error('Erro ao carregar dados GeoJSON:', error));
+        }
+
+
+        loadParquesData();
+
+        loadDelimitacaoPiaui();
+
+        function loadCSVData() {
+            Papa.parse('parques/parques-nordeste.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    var data = results.data;
+                    data.forEach(function(row) {
+                        L.marker([row.lat, row.lon], {icon: L.icon({
+                            iconUrl: 'img/parque.png',
+                            iconSize: [42, 42]
+                        })}).addTo(map)
+                        .bindPopup('<b>' + row.nome + '</b><br>' + row.descricao);
+                    });
+                },
+                error: function(error) {
+                    console.error('Erro ao carregar dados do CSV:', error);
+                }
+            });
+        }
+
+        loadCSVData();
+
+        var legend = L.control({position: 'bottomleft'});
+        legend.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'legend');
+            div.innerHTML += '<h4 style="text-align: center; margin-top: 0px; font-weight: bold;": center;">>| Legenda |<</h4>';
+            div.innerHTML += '<div><img src="img/fogo-icon.svg" width="20" height="20" style="text-align: center;"> - Focos de Incêndio<br></div>';
+            div.innerHTML += '<img src="img/parque.png" width="24" height="24" text-align: center;>- Parques Nacionais (PARNAS)<br>';
+            div.innerHTML += '<img src="img/verde.png" width="20" height="20" text-align: center;> - Delimitação dos P. Nacionais<br>';
+            div.innerHTML += '<img src="img/marca.png" width="20" height="20" text-align: center;> - Delimitação dos Estados do Nordeste<br>';
+            return div;
+        };
+        legend.addTo(map);
+
+    
+    </script>
+</body>
+</html>

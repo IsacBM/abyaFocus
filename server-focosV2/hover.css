@@ -1,0 +1,14 @@
+.opcaoi:hover{
+    background-color: orangered;
+    border-start-start-radius: 20px;
+    border-end-end-radius: 20px;
+    transition: 0.6s;
+    cursor: pointer;
+}
+.opcaoii:hover{
+    background-color: orangered;
+    border-start-start-radius: 20px;
+    border-end-end-radius: 20px;
+    transition: 0.6s;
+    cursor: pointer;
+}
