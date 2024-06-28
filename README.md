@@ -2,7 +2,7 @@
 > Status do Projeto: Em Andamento...
 <!-- Status do Projeto: Concluido :heavy_check_mark:-->
 
-O projeto **`AbyaFocus`** nasceu de uma feira de ciências, com o objetivo de desenvolver um sistema capaz de identificar e monitorar queimadas em "tempo real". O projeto foi desenvolvido durante o meu ensino médio em Informática no Instituto Federal do Piauí - Campus São Raimundo Nonato, com o apoio do professor **[Dann Luciano de Menezes](https://www.alura.com.br/)**. Atualmente, na graduação em Análise e Desenvolvimento de Sistemas, estou aprimorando e expandindo esse projeto!
+O projeto **`AbyaFocus`** nasceu de uma feira de ciências, com o objetivo de desenvolver um sistema capaz de identificar e monitorar queimadas em "tempo real". O projeto foi desenvolvido durante o meu ensino médio em Informática no Instituto Federal do Piauí - Campus São Raimundo Nonato, com o apoio do professor **[Dann Luciano de Menezes](https://github.com/dannluciano)**. Atualmente, na graduação em Análise e Desenvolvimento de Sistemas, estou aprimorando e expandindo esse projeto!
 
 ### | Bibliotecas Utilizadas para a Interface:
 • **[Leaflet](https://imdb-api.com/api#Top250Movies-header)** - Biblioteca JavaScript de código aberto para mapas interativos.<br>
